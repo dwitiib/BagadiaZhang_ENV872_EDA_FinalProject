@@ -31,11 +31,7 @@ Air Quality, Asthma, Air Pollution, <Name of City>
 
 ## Folder structure, file formats, and naming conventions 
 
-<describe the folders contained in the repository, including what type of files they contain>
-
-<describe the formats of files for the various purposes contained in the repository>
-
-<describe your file naming conventions>
+Folders in this repository include: Output, Code, Data/Raw, & Data/Processed. Data files are all downloaded/processed into csv format and code is in both .Rmd files as well as .R files. Files are named to include whether they are raw or processed and they include the site in which the code or data is in reference to.
 
 ## Metadata
 
