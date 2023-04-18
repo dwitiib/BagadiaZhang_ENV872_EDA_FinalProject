@@ -45,3 +45,9 @@ NY_Asthma_Clean = NY_Asthma[-c(1:8),]
 NYC_Asthma = filter(NY_Asthma_Clean, County == "Bronx"|County == "Kings"|County == "New York"|County == "Queens"|County == "Richmond")
 
 ```
+
+## Save NYC data
+```{r NYC data save, message = FALSE}
+write.csv(NYC_Asthma, "./Data/ProcessedData/NYC_Asthma_2018to2020_processed.csv", row.names = FALSE)
+
+```
