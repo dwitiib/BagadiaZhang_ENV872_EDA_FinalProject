@@ -19,7 +19,6 @@ This R Markdown file aims to wrangle the data of NYC residents' asthma rates tha
 
 ## Set working directory and load packages
 ```{r packages, message = FALSE}
-getwd()
 library(tidyverse)
 library(lubridate)
 library(dplyr)
@@ -49,5 +48,6 @@ NYC_Asthma = filter(NY_Asthma_Clean, County == "Bronx"|County == "Kings"|County 
 ## Save NYC data
 ```{r NYC data save, message = FALSE}
 write.csv(NYC_Asthma, "./Data/ProcessedData/NYC_Asthma_2018to2020_processed.csv", row.names = FALSE)
+
 
 ```

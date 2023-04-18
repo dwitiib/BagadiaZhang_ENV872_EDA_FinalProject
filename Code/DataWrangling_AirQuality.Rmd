@@ -21,6 +21,7 @@ This R Markdown file aims to wrangle the data of NYC air quality by county from 
 
 ## Set working directory and load packages
 ```{r packages, message = FALSE}
+setwd("E:/MCRP/Spring2023/BagadiaZhang_ENV872_EDA_FinalProject")
 getwd()
 library(tidyverse)
 library(lubridate)
@@ -29,8 +30,6 @@ library(dplyr)
 
 ## Load data and set working directory
 ```{r data, message = FALSE}
-setwd("E:/MCRP/Spring2023/BagadiaZhang_ENV872_EDA_FinalProject")
-getwd()
 US_AQ_2018 = read.csv("./Data/RawData/annual_aqi_by_county_2018.csv", stringsAsFactors = TRUE)
 US_AQ_2019 = read.csv("./Data/RawData/annual_aqi_by_county_2019.csv", stringsAsFactors = TRUE)
 US_AQ_2020 = read.csv("./Data/RawData/annual_aqi_by_county_2020.csv", stringsAsFactors = TRUE)
