@@ -1,0 +1,47 @@
+---
+title: "Data Wrangling-Air Quality"
+author: "Dwiti Bagadia and Yue Zhang"
+date: "2023-04-18"
+output: pdf_document
+---
+
+```{r setup, include = FALSE}
+#This code chunk will tidy your knit PDF files, wrapping long code lines
+#For it to work, the "formatR" package needs to be installed
+#install.packages('formatR')
+knitr::opts_chunk$set(tidy.opts=list(width.cutoff=40), tidy=TRUE)
+
+```
+
+## OVERVIEW
+
+This R Markdown file aims to wrangle the data of NYC air quality by county in 2019.
+
+## Set working directory and load packages
+```{r packages, message = FALSE}
+getwd()
+library(tidyverse)
+library(lubridate)
+library(dplyr)
+```
+
+## Load data
+```{r data, message = FALSE}
+setwd("E:/MCRP/Spring2023/BagadiaZhang_ENV872_EDA_FinalProject")
+getwd()
+NY_Asthma = read.csv("./Data/RawData/AD-SubCountyData.csv", stringsAsFactors = TRUE)
+
+```
+
+## Clean the original dataset
+```{r clean data, message = FALSE}
+colnames(NY_Asthma) = c("Indicator", "Data Year", "County", "Zipcode", "Numbers", "Rate per 10k")
+NY_Asthma_Clean = NY_Asthma[-c(1:8),]
+
+```
+
+## Select NYC data
+```{r NYC data, message = FALSE}
+NYC_Asthma = filter(NY_Asthma_Clean, County == "Bronx"|County == "Kings"|County == "New York"|County == "Queens"|County == "Richmond")
+
+```
