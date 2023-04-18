@@ -1,0 +1,6 @@
+"State","County","DayswithAQI_18","BadDays_18","DayswithAQI_19","BadDays_19","DayswithAQI_20","BadDays_20","MeanBadDays"
+"New York","Bronx",365,79,365,85,366,75,0.218065693430657
+"New York","Kings",365,35,365,30,365,27,0.0840182648401827
+"New York","New York",365,110,365,72,366,55,0.216240875912409
+"New York","Queens",365,77,365,73,366,68,0.198905109489051
+"New York","Richmond",363,77,365,51,364,45,0.158424908424908

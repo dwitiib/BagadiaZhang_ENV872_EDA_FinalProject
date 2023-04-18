@@ -3,6 +3,8 @@ title: "Data Wrangling-Air Quality"
 author: "Dwiti Bagadia and Yue Zhang"
 date: "2023-04-18"
 output: pdf_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include = FALSE}
@@ -15,7 +17,7 @@ knitr::opts_chunk$set(tidy.opts=list(width.cutoff=40), tidy=TRUE)
 
 ## OVERVIEW
 
-This R Markdown file aims to wrangle the data of NYC air quality by county in 2019.
+This R Markdown file aims to wrangle the data of NYC air quality by county from 2018 to 2020.
 
 ## Set working directory and load packages
 ```{r packages, message = FALSE}
@@ -25,23 +27,59 @@ library(lubridate)
 library(dplyr)
 ```
 
-## Load data
+## Load data and set working directory
 ```{r data, message = FALSE}
 setwd("E:/MCRP/Spring2023/BagadiaZhang_ENV872_EDA_FinalProject")
 getwd()
-NY_Asthma = read.csv("./Data/RawData/AD-SubCountyData.csv", stringsAsFactors = TRUE)
+US_AQ_2018 = read.csv("./Data/RawData/annual_aqi_by_county_2018.csv", stringsAsFactors = TRUE)
+US_AQ_2019 = read.csv("./Data/RawData/annual_aqi_by_county_2019.csv", stringsAsFactors = TRUE)
+US_AQ_2020 = read.csv("./Data/RawData/annual_aqi_by_county_2020.csv", stringsAsFactors = TRUE)
 
 ```
 
-## Clean the original dataset
-```{r clean data, message = FALSE}
-colnames(NY_Asthma) = c("Indicator", "Data Year", "County", "Zipcode", "Numbers", "Rate per 10k")
-NY_Asthma_Clean = NY_Asthma[-c(1:8),]
+## Select NY data
+```{r NY data, message = FALSE}
+NY_AQ_2018 = subset(US_AQ_2018, State == "New York")
+NY_AQ_2019 = subset(US_AQ_2019, State == "New York")
+NY_AQ_2020 = subset(US_AQ_2020, State == "New York")
+
+```
+
+## Clean NY data and calculate days with bad air quality
+```{r clean NY data, message = FALSE}
+NY_AQ_2018_clean = NY_AQ_2018 %>% mutate("BadDays" = Days.with.AQI - Good.Days) %>% select(State, County, Year, Days.with.AQI, BadDays) 
+NY_AQ_2019_clean = NY_AQ_2019 %>% mutate("BadDays" = Days.with.AQI - Good.Days) %>% select(State, County, Year, Days.with.AQI, BadDays)
+NY_AQ_2020_clean = NY_AQ_2020 %>% mutate("BadDays" = Days.with.AQI - Good.Days) %>% select(State, County, Year, Days.with.AQI, BadDays)
 
 ```
 
 ## Select NYC data
 ```{r NYC data, message = FALSE}
-NYC_Asthma = filter(NY_Asthma_Clean, County == "Bronx"|County == "Kings"|County == "New York"|County == "Queens"|County == "Richmond")
+NYC_AQ_2018 = NY_AQ_2018_clean %>% filter(County == "Bronx"|County == "Kings"|County == "New York"|County == "Queens"|County == "Richmond") %>% select(State, County, Days.with.AQI, BadDays)
+colnames(NYC_AQ_2018) = c("State", "County", "DayswithAQI_18", "BadDays_18")
+
+NYC_AQ_2019 = filter(NY_AQ_2019_clean, County == "Bronx"|County == "Kings"|County == "New York"|County == "Queens"|County == "Richmond") %>% select(State, County, Days.with.AQI, BadDays)
+colnames(NYC_AQ_2019) = c("State", "County", "DayswithAQI_19", "BadDays_19")
+
+NYC_AQ_2020 = filter(NY_AQ_2020_clean, County == "Bronx"|County == "Kings"|County == "New York"|County == "Queens"|County == "Richmond") %>% select(State, County, Days.with.AQI, BadDays)
+colnames(NYC_AQ_2020) = c("State", "County", "DayswithAQI_20", "BadDays_20")
+
+```
+
+## Join the NYC datasets
+```{r Join NYC data, message = FALSE}
+NYC_AQ_join = merge(NYC_AQ_2018, NYC_AQ_2019, by = c("State", "County")) %>% merge(NYC_AQ_2020, by = c("State", "County"))
+
+```
+
+## Calculate the mean bad days from 2018 to 2020
+```{r clean NYC data, message = FALSE}
+NYC_AQ_join_clean = NYC_AQ_join %>% mutate("MeanBadDays" = (BadDays_18 + BadDays_19 + BadDays_20)/(DayswithAQI_18 + DayswithAQI_19 + DayswithAQI_20))
+
+```
+
+## Save NYC AQ data
+```{r save data, message = FALSE}
+write.csv(NYC_AQ_join_clean, "./Data/ProcessedData/NYC_AQ_2018to2020_processed.csv", row.names = FALSE)
 
 ```
