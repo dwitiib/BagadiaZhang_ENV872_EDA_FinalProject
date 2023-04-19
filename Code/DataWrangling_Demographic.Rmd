@@ -53,5 +53,4 @@ NYC_Demographic_clean = NYC_Demographic_clean %>% mutate("NonWhiteDens" = (as.nu
 ```{r data save, message = FALSE}
 write.csv(NYC_Demographic_clean, "./Data/ProcessedData/NYC_Demographic_processed.csv", row.names = FALSE)
 
-
 ```
