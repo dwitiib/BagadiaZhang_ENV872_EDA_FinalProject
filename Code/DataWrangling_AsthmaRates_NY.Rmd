@@ -44,7 +44,7 @@ colnames(US_Asthma_clean) = c("State", "County","CountyFIPS", "TractFIPS", "Asth
 
 ## Select New York data
 ```{r NY data, message = FALSE}
-NY_Asthma = filter(US_Asthma_clean, State == "New York")
+NY_Asthma = US_Asthma_clean %>% filter(State == "New York") %>% select(County, CountyFIPS, TractFIPS, AsthmaRate)
 
 ```
 
