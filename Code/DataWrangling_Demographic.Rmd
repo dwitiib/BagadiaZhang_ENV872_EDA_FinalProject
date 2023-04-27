@@ -17,7 +17,7 @@ knitr::opts_chunk$set(tidy.opts=list(width.cutoff=40), tidy=TRUE)
 
 ## OVERVIEW
 
-This R Markdown file aims to wrangle the demographic data of NYC from 2016 to 2022.
+This R Markdown file aims to wrangle the demographic data of New York State by census track from 2016 to 2020.
 
 ## Set working directory and load packages
 ```{r packages, message = FALSE}
