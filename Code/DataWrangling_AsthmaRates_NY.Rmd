@@ -17,7 +17,7 @@ knitr::opts_chunk$set(tidy.opts=list(width.cutoff=40), tidy=TRUE)
 
 ## OVERVIEW
 
-This R Markdown file aims to wrangle the data of New York State's model-based estimate for crude prevalence of current asthma among adults aged >=18 years, 2020, which is the number of cases per 100,000 population at risk..
+This R Markdown file aims to wrangle the data of New York State's model-based estimate for crude prevalence of current asthma among adults aged >=18 years, 2020, which is the number of cases per 100,000 population at risk.
 
 ## Set working directory and load packages
 ```{r packages, message = FALSE}
