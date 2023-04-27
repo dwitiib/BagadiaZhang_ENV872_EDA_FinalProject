@@ -50,7 +50,7 @@ NY_Asthma = filter(US_Asthma_clean, State == "New York")
 
 ## Save NYC data
 ```{r NYC data save, message = FALSE}
-write.csv(NY_Asthma, "./Data/ProcessedData/NY_Asthma", row.names = FALSE)
+write.csv(NY_Asthma, "./Data/ProcessedData/NY_Asthma_processed", row.names = FALSE)
 
 
 ```
