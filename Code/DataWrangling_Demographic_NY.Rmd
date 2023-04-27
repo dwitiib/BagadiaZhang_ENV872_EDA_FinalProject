@@ -52,7 +52,10 @@ colnames(NY_Demographic_clean) = c("State", "County", "CountyFIPS", "TotalPop", 
 
 ## Calculate the non white population density.
 ```{r, message = FALSE}
-NY_Demographic_clean = NY_Demographic_clean %>% mutate("NonWhiteDens" = (as.numeric(TotalPop) - as.numeric(White))/as.numeric(LandArea_SqMile)) %>% select("County", "CountyFIPS", "NonWhiteDens")
+NY_Demographic_clean = NY_Demographic_clean %>% mutate("NonWhiteDens" = (as.numeric(TotalPop) - as.numeric(White))/as.numeric(LandArea_SqMile)) %>% 
+  select("County", "CountyFIPS", "NonWhiteDens")
+
+NY_Demographic_clean$County = sub("\\s+", "", NY_Demographic_clean$County)
 
 ```
 
