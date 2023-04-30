@@ -42,7 +42,7 @@ NY_AQ = subset(US_AQ, State == "New York")
 
 ## Clean NY data and calculate days with bad air quality rate
 ```{r clean NY data, message = FALSE}
-NY_AQ_clean = NY_AQ %>% mutate("BadDaysRate" = (as.numeric(Days.with.AQI) - as.numeric(Good.Days))/as.numeric(Days.with.AQI)) %>% select(County, BadDaysRate)
+NY_AQ_clean = NY_AQ %>% select(County, Median.AQI)
 
 ```
 
