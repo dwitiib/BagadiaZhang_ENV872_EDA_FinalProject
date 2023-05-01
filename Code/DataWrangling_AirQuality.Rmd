@@ -19,6 +19,7 @@ knitr::opts_chunk$set(tidy.opts=list(width.cutoff=40), tidy=TRUE)
 
 This R Markdown file aims to wrangle the data of New York State air quality by county from 2018 to 2020.
 
+
 ## Set working directory and load packages
 ```{r packages, message = FALSE}
 setwd("E:/MCRP/Spring2023/BagadiaZhang_ENV872_EDA_FinalProject")
@@ -28,15 +29,17 @@ library(lubridate)
 library(dplyr)
 ```
 
-## Load data and set working directory
+## Load AQ data and set working directory
 ```{r data, message = FALSE}
 US_AQ_2018 = read.csv("./Data/RawData/annual_aqi_by_county_2018.csv")
 US_AQ_2019 = read.csv("./Data/RawData/annual_aqi_by_county_2019.csv")
 US_AQ_2020 = read.csv("./Data/RawData/annual_aqi_by_county_2020.csv")
-
+US_Ozone = read.csv("./Data/RawData/daily_44201_2020.csv")
+US_SO2 = read.csv("./Data/RawData/daily_42401_2020.csv")
+US_CO = read.csv("./Data/RawData/daily_42101_2020.csv")
 ```
 
-## Select NY data
+## Select NY AQ data
 ```{r NY data, message = FALSE}
 NY_AQ_2018 = subset(US_AQ_2018, State == "New York")
 NY_AQ_2019 = subset(US_AQ_2019, State == "New York")
@@ -61,7 +64,7 @@ colnames(NY_AQ_2020_clean) = c("County", "Days20", "BadDays20")
 
 ```
 
-## Join the NYC datasets
+## Join the NY AQ datasets
 ```{r Join, message = FALSE}
 NY_AQ_join = merge(NY_AQ_2018_clean, NY_AQ_2019_clean, by = "County") %>% 
   merge(NY_AQ_2020_clean, by = "County")
@@ -74,8 +77,52 @@ NY_AQ_join_clean = NY_AQ_join %>% mutate("BadDaysRate" = as.numeric(BadDays18 + 
 
 ```
 
-## Save NYC AQ data
+## Select NY Ozone data
+```{r NY data, message = FALSE}
+NY_Ozone = subset(US_Ozone, State.Name == "New York")
+
+```
+
+## Clean NY data and calculate mean ozone AQI
+```{r clean NY data, message = FALSE}
+# AQI in this file means the Air Quality Index for the day for ozone
+NY_Ozone_clean = NY_Ozone[, c(24, 6:8, 19)]
+NY_Ozone_clean = NY_Ozone_clean %>% group_by(County.Name) %>% summarise(meanOzone = mean(AQI))
+
+```
+
+## Select NY SO2 data
+```{r NY data, message = FALSE}
+NY_SO2 = subset(US_SO2, State.Name == "New York")
+
+```
+
+## Clean NY data and calculate mean SO2 AQI
+```{r clean NY data, message = FALSE}
+# AQI in this file means the Air Quality Index for the day for SO2
+NY_SO2_clean = NY_SO2[, c(26, 6:8, 10, 20)]
+NY_SO2_clean = NY_SO2_clean %>% filter(Sample.Duration == "1 HOUR") %>% group_by(County.Name) %>% summarise(meanSO2 = mean(AQI))
+
+```
+
+## Select NY CO data
+```{r NY data, message = FALSE}
+NY_CO = subset(US_CO, State.Name == "New York")
+
+```
+
+## Clean NY data and calculate mean CO AQI
+```{r clean NY data, message = FALSE}
+# AQI in this file means the Air Quality Index for the day for CO
+NY_CO_clean = NY_CO[, c(26, 6:8, 10, 20)]
+NY_CO_clean = NY_CO_clean %>% filter(Sample.Duration == "8-HR RUN AVG END HOUR") %>% group_by(County.Name) %>% summarise(meanCO = mean(AQI))
+
+```
+
+## Save NY data
 ```{r save data, message = FALSE}
 write.csv(NY_AQ_join_clean, "./Data/ProcessedData/NY_AQ_processed1.csv", row.names = FALSE)
-
+write.csv(NY_Ozone_clean, "./Data/ProcessedData/NY_Ozone_processed.csv", row.names = FALSE)
+write.csv(NY_SO2_clean, "./Data/ProcessedData/NY_SO2_processed.csv", row.names = FALSE)
+write.csv(NY_CO_clean, "./Data/ProcessedData/NY_CO_processed.csv", row.names = FALSE)
 ```

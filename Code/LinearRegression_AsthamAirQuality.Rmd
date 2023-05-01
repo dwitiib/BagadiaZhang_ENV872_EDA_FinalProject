@@ -5,26 +5,62 @@ date: "2023-04-24"
 output: pdf_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, include = FALSE}
+#This code chunk will tidy your knit PDF files, wrapping long code lines
+#For it to work, the "formatR" package needs to be installed
+#install.packages('formatR')
+knitr::opts_chunk$set(tidy.opts=list(width.cutoff=40), tidy=TRUE)
+
 ```
 
-## R Markdown
+## OVERVIEW
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+This R Markdown file aims to generate the linear model for asthma rate and air quality in New York State in 2020.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+## Set working directory and load packages
+```{r packages, message = FALSE}
+setwd("E:/MCRP/Spring2023/BagadiaZhang_ENV872_EDA_FinalProject")
+getwd()
+library(tidyverse)
+library(lubridate)
+library(dplyr)
+library(agricolae)
+library(ggthemes)
 
-```{r cars}
-summary(cars)
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+## Load data and set plot themes
+```{r data, message = FALSE}
+NY_Asthma_processed = read.csv("./Data/ProcessedData/NY_Asthma_processed1.csv")
+NY_AQ_processed = read.csv("./Data/ProcessedData/NY_AQ_processed1.csv")
+mytheme = theme_clean(base_size = 12) + 
+  theme(axis.text = element_text(color = "black"), legend.position = "right", axis.text.x = element_text(angle = 45, vjust = 0.5, hjust = 0.5), plot.title = element_text(size = 12))
+theme_set(mytheme)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Join the asthma data and air quality data together
+```{r join, message = FALSE}
+NY_Asthma_AQ_join = left_join(NY_AQ_processed, NY_Asthma_processed, by = "County")
+
+```
+
+## Visualize the relationship of bad days rate by asthma rate with a scatter plot
+```{r scatter plot, message = FALSE}
+AsthmaAQ.points = ggplot(NY_Asthma_AQ_join, aes(y = log(BadDaysRate), x =VisitRate)) + 
+  geom_point(aes(color = County)) + 
+  geom_smooth(method = "lm") + 
+  labs(y = "Bad Days Rate", x = "Emergency Visit Rate (per 10k)")
+print(AsthmaAQ.points)
+
+```
+
+## Generate linear model to test the relationship
+```{r linear.regression, message = FALSE}
+AsthmaAQ.regression = lm(data = NY_Asthma_AQ_join, log(BadDaysRate) ~ VisitRate)
+summary(AsthmaAQ.regression)
+plot(AsthmaAQ.regression,1)
+plot(AsthmaAQ.regression,2)
+plot(AsthmaAQ.regression,3)
+plot(AsthmaAQ.regression,4)
+
+```
