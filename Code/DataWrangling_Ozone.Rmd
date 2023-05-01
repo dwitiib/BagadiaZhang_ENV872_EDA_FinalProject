@@ -1,0 +1,54 @@
+---
+title: "Data Wrangling_Ozone"
+author: "Dwiti Bagadia and Yue Zhang"
+date: "2023-04-30"
+output: pdf_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include = FALSE}
+#This code chunk will tidy your knit PDF files, wrapping long code lines
+#For it to work, the "formatR" package needs to be installed
+#install.packages('formatR')
+knitr::opts_chunk$set(tidy.opts=list(width.cutoff=40), tidy=TRUE)
+
+```
+
+## OVERVIEW
+
+This R Markdown file aims to wrangle the data of Ozone in New York State by county in 2020.
+
+## Set working directory and load packages
+```{r packages, message = FALSE}
+setwd("E:/MCRP/Spring2023/BagadiaZhang_ENV872_EDA_FinalProject")
+getwd()
+library(tidyverse)
+library(lubridate)
+library(dplyr)
+```
+
+## Load data
+```{r data, message = FALSE}
+US_Ozone = read.csv("./Data/RawData/daily_44201_2020.csv")
+
+```
+
+## Select NY data
+```{r NY data, message = FALSE}
+NY_Ozone = subset(US_Ozone, State.Name == "New York")
+
+```
+
+## Clean NY data and calculate days with bad air quality rate
+```{r clean NY data, message = FALSE}
+NY_Ozone_clean = NY_Ozone[, c(24, 6:8, 19)]
+NY_Ozone_clean = NY_Ozone_clean %>% group_by(County.Name) %>% summarise(meanOzone = mean(AQI))
+
+```
+
+## Save NY Ozone data
+```{r save data, message = FALSE}
+write.csv(NY_Ozone_clean, "./Data/ProcessedData/NY_Ozone_processed.csv", row.names = FALSE)
+
+```
