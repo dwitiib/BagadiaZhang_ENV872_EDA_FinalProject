@@ -52,7 +52,7 @@ NY_Asthma_Clean = NY_Asthma_Clean %>%
 
 ## Save NY data
 ```{r data save, message = FALSE}
-write.csv(NY_Asthma_Clean, "./Data/ProcessedData/NY_processed1.csv", row.names = FALSE)
+write.csv(NY_Asthma_Clean, "./Data/ProcessedData/NY_Asthma_processed1.csv", row.names = FALSE)
 
 
 ```
