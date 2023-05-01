@@ -70,7 +70,7 @@ NY_AQ_join = merge(NY_AQ_2018_clean, NY_AQ_2019_clean, by = "County") %>%
 
 ## Calculate the mean bad days from 2018 to 2020
 ```{r clean NYC data, message = FALSE}
-NY_AQ_join_clean = NY_AQ_join %>% mutate("BadDaysRate" = as.numeric(BadDays18 + BadDays19 + BadDays20)*100/as.numeric(Days18 + Days19 + Days20))
+NY_AQ_join_clean = NY_AQ_join %>% mutate("BadDaysRate" = as.numeric(BadDays18 + BadDays19 + BadDays20)*100/as.numeric(Days18 + Days19 + Days20)) %>% select(County, BadDaysRate)
 
 ```
 
