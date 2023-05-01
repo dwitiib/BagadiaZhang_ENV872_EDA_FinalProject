@@ -15,7 +15,7 @@ knitr::opts_chunk$set(tidy.opts=list(width.cutoff=40), tidy=TRUE)
 
 ## OVERVIEW
 
-This R Markdown file aims to wrangle the data of NYC residents' asthma rates that age from 0 to 17 from 2018 to 2020.
+This R Markdown file aims to wrangle the data of New York State residents' asthma rates per 10,000 that age from 0 to 17 from 2018 to 2020.
 
 ## Set working directory and load packages
 ```{r packages, message = FALSE}
@@ -28,26 +28,31 @@ library(dplyr)
 ```{r data, message = FALSE}
 setwd("E:/MCRP/Spring2023/BagadiaZhang_ENV872_EDA_FinalProject")
 getwd()
-NY_Asthma = read.csv("./Data/RawData/AD-SubCountyData.csv", stringsAsFactors = TRUE)
+NY_Asthma = read.csv("./Data/RawData/AD-CountyMostRecentYearData.csv")
 
 ```
 
 ## Clean the original dataset
 ```{r clean data, message = FALSE}
-colnames(NY_Asthma) = c("Indicator", "Data Year", "County", "Zipcode", "Numbers", "Rate per 10k")
-NY_Asthma_Clean = NY_Asthma[-c(1:8),]
+NY_Asthma_Clean = NY_Asthma[-c(1,2), c(1,5:7)]
+colnames(NY_Asthma_Clean) = c("County", "Indicator", "EDVisits", "AvePop")
 
 ```
 
-## Select NYC data
-```{r NYC data, message = FALSE}
-NYC_Asthma = filter(NY_Asthma_Clean, County == "Bronx"|County == "Kings"|County == "New York"|County == "Queens"|County == "Richmond")
+## Calculate emergency visit rate per 10,000
+```{r, message = FALSE}
+NY_Asthma_Clean$EDVisits = gsub(",","",NY_Asthma_Clean$EDVisits)
+NY_Asthma_Clean$AvePop = gsub(",","",NY_Asthma_Clean$AvePop)
+NY_Asthma_Clean = NY_Asthma_Clean %>% 
+  filter(Indicator == "Asthma emergency department visit rate per 10,000 - aged 0-17 years")  %>% 
+  mutate("Rate" = as.numeric(EDVisits)*10000/as.numeric(AvePop)) %>% 
+  select(County, Rate)
 
 ```
 
-## Save NYC data
-```{r NYC data save, message = FALSE}
-write.csv(NYC_Asthma, "./Data/ProcessedData/NYC_Asthma_2018to2020_processed.csv", row.names = FALSE)
+## Save NY data
+```{r data save, message = FALSE}
+write.csv(NY_Asthma_Clean, "./Data/ProcessedData/NY_processed1.csv", row.names = FALSE)
 
 
 ```
