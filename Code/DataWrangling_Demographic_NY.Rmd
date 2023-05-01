@@ -17,7 +17,7 @@ knitr::opts_chunk$set(tidy.opts=list(width.cutoff=40), tidy=TRUE)
 
 ## OVERVIEW
 
-This R Markdown file aims to wrangle the demographic data of New York State by census track from 2016 to 2022.
+This R Markdown file aims to wrangle the demographic data of New York State by county from 2016 to 2022.
 
 ## Set working directory and load packages
 ```{r packages, message = FALSE}
@@ -30,37 +30,33 @@ library(dplyr)
 
 ## Load data
 ```{r data, message = FALSE}
-NY_Demographic = read.csv(
-  "../BagadiaZhang_ENV872_EDA_FinalProject/Data/RawData/R13363308_SL140.csv"
-)
+NY_Demographic = read.csv("./Data/RawData/R13366951_SL050.csv")
 
 ```
 
 ## Clean the original dataset
 ```{r clean data, message = FALSE}
-NY_Demographic = NY_Demographic[-1,]
-a = strsplit(NY_Demographic$Qualifying.Name, ",")
+NY_Demographic = NY_Demographic[-1,c(44, 58, 60, 63:69)]
+a = strsplit(NY_Demographic$Area.Name, " ")
 a = unlist(a)
 str(a)
-NY_Demographic$Census  = a[seq(1,16233,3)]
-NY_Demographic$COUNTY = a[seq(2,16233,3)]
-NY_Demographic$STATE = a[seq(3,16233,3)]
-NY_Demographic_clean = NY_Demographic[,c(72, 71, 48, 58, 60, 63:69)]
-colnames(NY_Demographic_clean) = c("State", "County", "CountyFIPS", "TotalPop", "LandArea_SqMile", "White", "Black", "AmeIndian", "Asian", "Hawaiian", "Other", "TwoOrMore")
+NY_Demographic$County  = a[seq(1, 124, 2)]
+NY_Demographic$COUNTY = a[seq(2,124,2)]
+NY_Demographic_clean = NY_Demographic[,c(11, 2:10)]
+colnames(NY_Demographic_clean) = c("County", "TotalPop", "LandArea_SqMile", "White", "Black", "AmeIndian", "Asian", "Hawaiian", "Other", "TwoOrMore")
 
 ```
 
 ## Calculate the non white population density.
 ```{r, message = FALSE}
 NY_Demographic_clean = NY_Demographic_clean %>% mutate("NonWhiteDens" = (as.numeric(TotalPop) - as.numeric(White))/as.numeric(LandArea_SqMile)) %>% 
-  select("County", "CountyFIPS", "NonWhiteDens")
+  select("County", "NonWhiteDens")
 
-NY_Demographic_clean$County = sub("\\s+", "", NY_Demographic_clean$County)
 
 ```
 
 ## Save data
 ```{r data save, message = FALSE}
-write.csv(NY_Demographic_clean, "./Data/ProcessedData/NY_Demographic_processed.csv", row.names = FALSE)
+write.csv(NY_Demographic_clean, "./Data/ProcessedData/NY_Demographic_processed1.csv", row.names = FALSE)
 
 ```
