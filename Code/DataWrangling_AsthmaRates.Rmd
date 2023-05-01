@@ -46,7 +46,7 @@ NY_Asthma_Clean$AvePop = gsub(",","",NY_Asthma_Clean$AvePop)
 NY_Asthma_Clean = NY_Asthma_Clean %>% 
   filter(Indicator == "Asthma emergency department visit rate per 10,000 - aged 0-17 years")  %>% 
   mutate("VisitRate" = as.numeric(EDVisits)*10000/as.numeric(AvePop)) %>% 
-  select(County, Rate)
+  select(County, VisitRate)
 
 ```
 
