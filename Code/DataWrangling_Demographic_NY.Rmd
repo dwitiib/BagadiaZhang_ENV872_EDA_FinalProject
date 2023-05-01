@@ -37,11 +37,11 @@ NY_Demographic = read.csv("./Data/RawData/R13366951_SL050.csv")
 ## Clean the original dataset
 ```{r clean data, message = FALSE}
 NY_Demographic = NY_Demographic[-1,c(44, 58, 60, 63:69)]
-a = strsplit(NY_Demographic$Area.Name, " ")
+a = strsplit(NY_Demographic$Area.Name, " C")
 a = unlist(a)
 str(a)
 NY_Demographic$County  = a[seq(1, 124, 2)]
-NY_Demographic$COUNTY = a[seq(2,124,2)]
+NY_Demographic$Blah = a[seq(2,124,2)]
 NY_Demographic_clean = NY_Demographic[,c(11, 2:10)]
 colnames(NY_Demographic_clean) = c("County", "TotalPop", "LandArea_SqMile", "White", "Black", "AmeIndian", "Asian", "Hawaiian", "Other", "TwoOrMore")
 
