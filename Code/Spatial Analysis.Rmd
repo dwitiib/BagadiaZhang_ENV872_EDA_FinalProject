@@ -1,0 +1,127 @@
+---
+title: "Spatial Analysis"
+author: "Dwiti Bagadia and Yue Zhang"
+date: "2023-05-02"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+## Overview
+This R markdown file aims to create maps and show spatial distribution of air quality and asthma rates.
+
+## Load packages and set working directory
+```{r load packages, message = FALSE}
+library(tidyverse)
+library(sf)
+library(leaflet)
+library(mapview)
+library(RColorBrewer)
+setwd("E:/MCRP/Spring2023/BagadiaZhang_ENV872_EDA_FinalProject")
+getwd()
+
+```
+
+## Load data
+```{r load data, message = FALSE}
+NY_Asthma_processed = read.csv("./Data/ProcessedData/NY_Asthma_processed1.csv")
+NY_AQ_processed = read.csv("./Data/ProcessedData/NY_AQ_processed1.csv")
+NY_Demographic_processed = read.csv("./Data/ProcessedData/NY_Demographic_processed1.csv")
+NY_Ozone_processed = read.csv("./Data/ProcessedData/NY_Ozone_processed.csv")
+NY_PM25_processed = read.csv("./Data/ProcessedData/NY_PM25_processed.csv")
+NY_SO2_processed = read.csv("./Data/ProcessedData/NY_SO2_processed.csv")
+```
+
+## Read the counties shapefile and filter NY and visualize it 
+```{r data exploratory, message = FALSE}
+NY_sf = st_read("./Data/SpatialData/cb_2018_us_county_20m.shp") %>% filter(STATEFP == "36")
+st_crs(NY_sf)
+head(NY_sf)
+NY_sf_2263 = st_transform(NY_sf, crs = 2263)
+mapView(NY_sf_2263)
+
+```
+
+## Join asthma data to counties shapefile and visualize it 
+```{r asthma visualize, message = FALSE}
+NY_Asthma_Counties_sf = merge(NY_sf_2263,
+                              NY_Asthma_processed,
+                              by.x = "NAME",
+                              by.y = "County")
+mapView(
+  NY_Asthma_Counties_sf,
+  zcol = "VisitRate",
+  col.regions = brewer.pal(10, "RdBu"),
+  layer.name = "Asthma Rate per 10,000 Children in New York Stae from 2018 to 2020",
+  map.types = "CartoDB.Positron",
+  label = NY_Asthma_Counties_sf$NAME,
+  labelOptions = labelOptions(
+    noHide = TRUE,
+    textOnly = TRUE,
+    textsize = "8px",
+    direction = "center"
+  )
+)
+
+```
+
+## Join demographic data to counties shapefile and visualize it 
+```{r demographic visualize, message = FALSE}
+NY_Demographic_Counties_sf = merge(NY_sf_2263,
+                                   NY_Demographic_processed,
+                                   by.x = "NAME",
+                                   by.y = "County")
+mapView(
+  NY_Demographic_Counties_sf,
+  zcol = "NonWhiteDens",
+  col.regions = brewer.pal(10, "PiYG"),
+  layer.name = "Non-White Population Density per Sq.mile in New York State from 2016 to 2020",
+  map.types = "CartoDB.Positron",
+  label = NY_Demographic_Counties_sf$NAME,
+  labelOptions = labelOptions(
+    noHide = TRUE,
+    textOnly = TRUE,
+    textsize = "8px",
+    direction = "center"
+  )
+) 
+
+```
+
+## Join pollutants data to counties shapefile and visualize it 
+```{r pollutants visualize, message = FALSE}
+#Ozone monitor sites
+NY_Ozone_Counties_sf = merge(NY_sf_2263, NY_Ozone_processed, by.x = "NAME", by.y = "County")
+NY_Ozone_point = st_centroid(NY_Ozone_Counties_sf)
+st_crs(NY_Ozone_point)
+mapView(NY_sf_2263, col.regions = "orange") + mapView(
+  NY_Ozone_point,
+  cex = "meanOzone",
+  col.regions = "mediumpurple",
+  layer.name = "Ozone in New York State in 2020",
+  map.types = "CartoDB.Positron"
+)
+
+#PM2.5 monitor sites
+NY_PM25_Counties_sf = merge(NY_sf_2263, NY_PM25_processed, by.x = "NAME", by.y = "County")
+NY_PM25_point = st_centroid(NY_PM25_Counties_sf)
+mapView(NY_sf_2263, col.regions = "orange") + mapView(
+  NY_PM25_point,
+  cex = "meanPM25",
+  col.regions = "cadetblue1",
+  layer.name = "PM2.5 in New York State in 2020",
+  map.types = "CartoDB.Positron"
+)
+
+#SO2 monitor sites
+NY_SO2_Counties_sf = merge(NY_sf_2263, NY_SO2_processed, by.x = "NAME", by.y = "County")
+NY_SO2_point = st_centroid(NY_SO2_Counties_sf)
+mapView(NY_sf, col.regions = "orange") + mapView(
+  NY_SO2_point,
+  cex = "meanSO2",
+  col.regions = "greenyellow",
+  layer.name = "SO2 in New York State in 2020",
+  map.types = "CartoDB.Positron"
+)
+
+```
