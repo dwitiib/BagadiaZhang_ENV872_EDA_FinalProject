@@ -92,6 +92,7 @@ NY_Ozone = subset(US_Ozone, State.Name == "New York")
 # AQI in this file means the Air Quality Index for the day for ozone
 NY_Ozone_clean = NY_Ozone[, c(24, 6:8, 19)]
 NY_Ozone_clean = NY_Ozone_clean %>% group_by(County.Name) %>% summarise(meanOzone = mean(AQI))
+colnames(NY_Ozone_clean) = c("County", "meanOzone")
 
 ```
 
@@ -106,6 +107,7 @@ NY_SO2 = subset(US_SO2, State.Name == "New York")
 # AQI in this file means the Air Quality Index for the day for SO2
 NY_SO2_clean = NY_SO2[, c(26, 6:8, 10, 20)]
 NY_SO2_clean = NY_SO2_clean %>% filter(Sample.Duration == "1 HOUR") %>% group_by(County.Name) %>% summarise(meanSO2 = mean(AQI))
+colnames(NY_SO2_clean) = c("County", "meanSO2")
 
 ```
 
@@ -120,6 +122,7 @@ NY_CO = subset(US_CO, State.Name == "New York")
 # AQI in this file means the Air Quality Index for the day for CO
 NY_CO_clean = NY_CO[, c(26, 6:8, 10, 20)]
 NY_CO_clean = NY_CO_clean %>% filter(Sample.Duration == "8-HR RUN AVG END HOUR") %>% group_by(County.Name) %>% summarise(meanCO = mean(AQI))
+colnames(NY_CO_clean) = c("County", "meanCO")
 
 ```
 
@@ -134,6 +137,7 @@ NY_NO2 = subset(US_NO2, State.Name == "New York")
 # AQI in this file means the Air Quality Index for the day for NO2
 NY_NO2_clean = NY_NO2[, c(26, 6:8, 20)]
 NY_NO2_clean = NY_NO2_clean %>% group_by(County.Name) %>% summarise(meanNO2 = mean(AQI))
+colnames(NY_NO2_clean) = c("County", "meanNO2")
 
 ```
 
@@ -148,6 +152,7 @@ NY_PM25 = subset(US_PM25, State.Name == "New York")
 # AQI in this file means the Air Quality Index for the day for PM2.5
 NY_PM25_clean = NY_PM25[, c(26, 6:8, 10, 20)]
 NY_PM25_clean = NY_PM25_clean %>% filter(Sample.Duration == "24-HR BLK AVG") %>% group_by(County.Name) %>% summarise(meanPM25 = mean(AQI))
+colnames(NY_PM25_clean) = c("County", "meanPM25")
 
 ```
 
@@ -162,6 +167,7 @@ NY_PM10 = subset(US_PM10, State.Name == "New York")
 # AQI in this file means the Air Quality Index for the day for PM10 
 NY_PM10_clean = NY_PM10[, c(26, 6:8, 20)]
 NY_PM10_clean = NY_PM10_clean %>% group_by(County.Name) %>% summarise(meanPM10 = mean(AQI))
+colnames(NY_Ozone_clean) = c("County", "meanpm10")
 
 ```
 
