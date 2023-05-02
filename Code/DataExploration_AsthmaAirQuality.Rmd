@@ -1,8 +1,10 @@
 ---
-title: "Linear Regression for Asthma and Air Quality"
+title: "Data Exploration_Ashma and Air Quality"
 author: "Dwiti Bagadia and Yue Zhang"
-date: "2023-04-24"
+date: "2023-05-02"
 output: pdf_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include = FALSE}
@@ -15,7 +17,7 @@ knitr::opts_chunk$set(tidy.opts=list(width.cutoff=40), tidy=TRUE)
 
 ## OVERVIEW
 
-This R Markdown file aims to generate the linear model for asthma rate and air quality in New York State.
+This R Markdown file aims to explore asthma rate and air quality data. 
 
 ## Set working directory and load packages
 ```{r packages, message = FALSE}
@@ -45,16 +47,12 @@ NY_Asthma_AQ_join = left_join(NY_AQ_processed, NY_Asthma_processed, by = "County
 
 ```
 
-## Generate linear model to test the relationship
-```{r linear.regression, message = FALSE}
-AsthmaAQ.regression = lm(data = NY_Asthma_AQ_join, VisitRate ~ BadDaysRate)
-summary(AsthmaAQ.regression)
-par(mfrow = c(2,2), mar=c(3,3,3,3))
-plot(AsthmaAQ.regression)
-
-AsthmaAQ.regression2 = lm(data = NY_Asthma_AQ_join, log(VisitRate) ~ log(BadDaysRate))
-summary(AsthmaAQ.regression2)
-par(mfrow = c(2,2), mar=c(3,3,3,3))
-plot(AsthmaAQ.regression2)
+## Visualize the relationship of bad days rate by asthma rate with a scatter plot
+```{r scatter plot, message = FALSE}
+AsthmaAQ.points = ggplot(NY_Asthma_AQ_join, aes(y = VisitRate, x =BadDaysRate)) + 
+  geom_point(aes(color = County)) + 
+  geom_smooth(method = "lm") + 
+  labs(y = "Emergency Visit Rate (per 10k)", x = "Bad Days Rate")
+print(AsthmaAQ.points)
 
 ```
