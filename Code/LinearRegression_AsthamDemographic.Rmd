@@ -48,17 +48,17 @@ NY_Asthma_Demo_join = left_join(NY_Demographic_processed, NY_Asthma_processed, b
 
 ## Visualize the relationship of non-White population density by asthma rate with a scatter plot
 ```{r scatter plot, message = FALSE}
-AsthmaDemo.points = ggplot(NY_Asthma_Demo_join, aes(y = log(NonWhiteDens), x =log(VisitRate))) + 
+AsthmaDemo.points = ggplot(NY_Asthma_Demo_join, aes(y = log(VisitRate), x =log(NonWhiteDens))) + 
   geom_point(aes(color = County)) + 
   geom_smooth(method = "lm") + 
-  labs(y = "Non-White Population Density (per sq.mile)", x = "Emergency Visit Rate (per 10k)")
+  labs(y = "Emergency Visit Rate (per 10k)", x = "Non-White Population Density (per sq.mile)")
 print(AsthmaDemo.points)
 
 ```
 
 ## Generate linear model to test the relationship
 ```{r linear.regression, message = FALSE}
-AsthmaDemo.regression = lm(data = NY_Asthma_Demo_join, log(NonWhiteDens) ~ log(VisitRate))
+AsthmaDemo.regression = lm(data = NY_Asthma_Demo_join, log(VisitRate) ~ log(NonWhiteDens))
 summary(AsthmaDemo.regression)
 par(mfrow = c(2,2), mar=c(3,3,3,3))
 plot(AsthmaDemo.regression)

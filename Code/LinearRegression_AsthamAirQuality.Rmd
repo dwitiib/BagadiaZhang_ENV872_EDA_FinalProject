@@ -36,6 +36,7 @@ NY_AQ_processed = read.csv("./Data/ProcessedData/NY_AQ_processed1.csv")
 mytheme = theme_clean(base_size = 12) + 
   theme(axis.text = element_text(color = "black"), legend.position = "right", axis.text.x = element_text(angle = 45, vjust = 0.5, hjust = 0.5), plot.title = element_text(size = 12))
 theme_set(mytheme)
+
 ```
 
 ## Join the asthma data and air quality data together
@@ -46,21 +47,19 @@ NY_Asthma_AQ_join = left_join(NY_AQ_processed, NY_Asthma_processed, by = "County
 
 ## Visualize the relationship of bad days rate by asthma rate with a scatter plot
 ```{r scatter plot, message = FALSE}
-AsthmaAQ.points = ggplot(NY_Asthma_AQ_join, aes(y = log(BadDaysRate), x =VisitRate)) + 
+AsthmaAQ.points = ggplot(NY_Asthma_AQ_join, aes(y = log(VisitRate), x =log(BadDaysRate))) + 
   geom_point(aes(color = County)) + 
   geom_smooth(method = "lm") + 
-  labs(y = "Bad Days Rate", x = "Emergency Visit Rate (per 10k)")
+  labs(y = "Emergency Visit Rate (per 10k)", x = "Bad Days Rate")
 print(AsthmaAQ.points)
 
 ```
 
 ## Generate linear model to test the relationship
 ```{r linear.regression, message = FALSE}
-AsthmaAQ.regression = lm(data = NY_Asthma_AQ_join, log(BadDaysRate) ~ VisitRate)
+AsthmaAQ.regression = lm(data = NY_Asthma_AQ_join, log(VisitRate) ~ log(BadDaysRate))
 summary(AsthmaAQ.regression)
-plot(AsthmaAQ.regression,1)
-plot(AsthmaAQ.regression,2)
-plot(AsthmaAQ.regression,3)
-plot(AsthmaAQ.regression,4)
+par(mfrow = c(2,2), mar=c(3,3,3,3))
+plot(AsthmaAQ.regression)
 
 ```
