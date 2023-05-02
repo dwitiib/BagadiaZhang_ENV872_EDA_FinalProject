@@ -91,10 +91,11 @@ NY_Ozone = subset(US_Ozone, State.Name == "New York")
 ```{r clean NY data, message = FALSE}
 # AQI in this file means the Air Quality Index for the day for ozone
 NY_Ozone_clean = NY_Ozone[, c(24, 6:8, 19)]
-NY_Ozone_clean = NY_Ozone_clean %>% 
+NY_Ozone_clean1 = NY_Ozone_clean %>% 
   group_by(County.Name) %>% 
   summarise(meanOzone = mean(AQI))
-colnames(NY_Ozone_clean) = c("County", "meanOzone")
+colnames(NY_Ozone_clean1) = c("County", "meanOzone")
+colnames(NY_Ozone_clean) = c("County", "Latitude", "Longitude", "Datum", "AQI")
 
 ```
 
@@ -108,11 +109,12 @@ NY_SO2 = subset(US_SO2, State.Name == "New York")
 ```{r clean NY data, message = FALSE}
 # AQI in this file means the Air Quality Index for the day for SO2
 NY_SO2_clean = NY_SO2[, c(26, 6:8, 10, 20)]
-NY_SO2_clean = NY_SO2_clean %>% 
+NY_SO2_clean1 = NY_SO2_clean %>% 
   filter(Sample.Duration == "1 HOUR") %>% 
   group_by(County.Name) %>% 
   summarise(meanSO2 = mean(AQI))
-colnames(NY_SO2_clean) = c("County", "meanSO2")
+colnames(NY_SO2_clean1) = c("County", "meanSO2")
+colnames(NY_SO2_clean) = c("County", "Latitude", "Longitude", "Datum", "AQI")
 
 ```
 
@@ -126,11 +128,12 @@ NY_CO = subset(US_CO, State.Name == "New York")
 ```{r clean NY data, message = FALSE}
 # AQI in this file means the Air Quality Index for the day for CO
 NY_CO_clean = NY_CO[, c(26, 6:8, 10, 20)]
-NY_CO_clean = NY_CO_clean %>% 
+NY_CO_clean1 = NY_CO_clean %>% 
   filter(Sample.Duration == "8-HR RUN AVG END HOUR") %>% 
   group_by(County.Name) %>% 
   summarise(meanCO = mean(AQI))
-colnames(NY_CO_clean) = c("County", "meanCO")
+colnames(NY_CO_clean1) = c("County", "meanCO")
+colnames(NY_CO_clean) = c("County", "Latitude", "Longitude", "Datum", "AQI")
 
 ```
 
@@ -144,10 +147,11 @@ NY_NO2 = subset(US_NO2, State.Name == "New York")
 ```{r clean NY data, message = FALSE}
 # AQI in this file means the Air Quality Index for the day for NO2
 NY_NO2_clean = NY_NO2[, c(26, 6:8, 20)]
-NY_NO2_clean = NY_NO2_clean %>% 
+NY_NO2_clean1 = NY_NO2_clean %>% 
   group_by(County.Name) %>% 
   summarise(meanNO2 = mean(AQI))
-colnames(NY_NO2_clean) = c("County", "meanNO2")
+colnames(NY_NO2_clean1) = c("County", "meanNO2")
+colnames(NY_NO2_clean) = c("County", "Latitude", "Longitude", "Datum", "AQI")
 
 ```
 
@@ -161,11 +165,12 @@ NY_PM25 = subset(US_PM25, State.Name == "New York")
 ```{r clean NY data, message = FALSE}
 # AQI in this file means the Air Quality Index for the day for PM2.5
 NY_PM25_clean = NY_PM25[, c(26, 6:8, 10, 20)]
-NY_PM25_clean = NY_PM25_clean %>% 
+NY_PM25_clean1 = NY_PM25_clean %>% 
   filter(Sample.Duration == "24-HR BLK AVG") %>% 
   group_by(County.Name) %>% 
   summarise(meanPM25 = mean(AQI))
-colnames(NY_PM25_clean) = c("County", "meanPM25")
+colnames(NY_PM25_clean1) = c("County", "meanPM25")
+colnames(NY_PM25_clean) = c("County", "Latitude", "Longitude", "Datum", "AQI")
 
 ```
 
@@ -179,21 +184,27 @@ NY_PM10 = subset(US_PM10, State.Name == "New York")
 ```{r clean NY data, message = FALSE}
 # AQI in this file means the Air Quality Index for the day for PM10 
 NY_PM10_clean = NY_PM10[, c(26, 6:8, 20)]
-NY_PM10_clean = NY_PM10_clean %>% 
+NY_PM10_clean1 = NY_PM10_clean %>% 
   group_by(County.Name) %>% 
   summarise(meanPM10 = mean(AQI))
-colnames(NY_PM10_clean) = c("County", "meanPM10")
+colnames(NY_PM10_clean1) = c("County", "meanPM10")
+colnames(NY_PM10_clean) = c("County", "Latitude", "Longitude", "Datum", "AQI")
 
 ```
 
 ## Save NY data
 ```{r save data, message = FALSE}
 write.csv(NY_AQ_join_clean, "./Data/ProcessedData/NY_AQ_processed1.csv", row.names = FALSE)
-write.csv(NY_Ozone_clean, "./Data/ProcessedData/NY_Ozone_processed.csv", row.names = FALSE)
-write.csv(NY_SO2_clean, "./Data/ProcessedData/NY_SO2_processed.csv", row.names = FALSE)
-write.csv(NY_CO_clean, "./Data/ProcessedData/NY_CO_processed.csv", row.names = FALSE)
-write.csv(NY_NO2_clean, "./Data/ProcessedData/NY_NO2_processed.csv", row.names = FALSE)
-write.csv(NY_PM25_clean, "./Data/ProcessedData/NY_PM25_processed.csv", row.names = FALSE)
-write.csv(NY_PM10_clean, "./Data/ProcessedData/NY_PM10_processed.csv", row.names = FALSE)
-
+write.csv(NY_Ozone_clean1, "./Data/ProcessedData/NY_Ozone_processed.csv", row.names = FALSE)
+write.csv(NY_SO2_clean1, "./Data/ProcessedData/NY_SO2_processed.csv", row.names = FALSE)
+write.csv(NY_CO_clean1, "./Data/ProcessedData/NY_CO_processed.csv", row.names = FALSE)
+write.csv(NY_NO2_clean1, "./Data/ProcessedData/NY_NO2_processed.csv", row.names = FALSE)
+write.csv(NY_PM25_clean1, "./Data/ProcessedData/NY_PM25_processed.csv", row.names = FALSE)
+write.csv(NY_PM10_clean1, "./Data/ProcessedData/NY_PM10_processed.csv", row.names = FALSE)
+write.csv(NY_Ozone_clean, "./Data/ProcessedData/NY_Ozonemonitor_processed.csv", row.names = FALSE)
+write.csv(NY_SO2_clean, "./Data/ProcessedData/NY_SO2monitor_processed.csv", row.names = FALSE)
+write.csv(NY_CO_clean, "./Data/ProcessedData/NY_COmonitor_processed.csv", row.names = FALSE)
+write.csv(NY_NO2_clean, "./Data/ProcessedData/NY_NO2monitor_processed.csv", row.names = FALSE)
+write.csv(NY_PM25_clean, "./Data/ProcessedData/NY_PM25monitor_processed.csv", row.names = FALSE)
+write.csv(NY_PM10_clean, "./Data/ProcessedData/NY_PM10monitor_processed.csv", row.names = FALSE)
 ```
