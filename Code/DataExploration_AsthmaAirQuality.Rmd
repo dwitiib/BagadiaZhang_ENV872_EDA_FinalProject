@@ -47,7 +47,7 @@ NY_Asthma_AQ_join = left_join(NY_AQ_processed, NY_Asthma_processed, by = "County
 
 ```
 
-## Visualize the relationship of bad days rate by asthma rate with a scatter plot
+## Visualize the relationship of asthma rate by bad days rate with a scatter plot
 ```{r scatter plot, message = FALSE}
 AsthmaAQ.points = ggplot(NY_Asthma_AQ_join, aes(y = VisitRate, x =BadDaysRate)) + 
   geom_point(aes(color = County)) + 

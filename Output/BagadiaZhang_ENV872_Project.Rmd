@@ -1,0 +1,356 @@
+---
+title: "Analysis of Relationship between Outdoor Air Pollution and Childhood Asthma Rate in New York State"
+author: "Dwiti Bagadia and Yue Zhang"
+output:
+  bookdown::html_document2:
+    df_print: paged
+    toc: true
+    fig_caption: yes
+  pdf_document:
+    keep_tex: yes
+    fig_caption: yes
+subtitle: https://github.com/dwitiib/BagadiaZhang_ENV872_EDA_FinalProject.git
+geometry: margin=2.54cm
+fontsize: 12pt
+mainfont: Times New Roman
+editor_options:
+  chunk_output_type: console
+---
+
+```{=tex}
+\newpage
+\tableofcontents 
+\newpage
+```
+## List of Tables
+
+*Data Acquisition* 
+```{r table, echo = FALSE, results='asis', ref.label='table'}
+
+
+```
+
+
+
+\newpage
+
+## List of Figures
+```{r figure, warning = FALSE, echo = FALSE}
+- Figure \@ref(fig:ex-aq): Asthma Rate by Bad Days Rate
+```
+
+
+\newpage
+
+```{r setup, include = FALSE}
+# Set your working directory
+setwd("E:/MCRP/Spring2023/BagadiaZhang_ENV872_EDA_FinalProject")
+getwd()
+
+# Load your packages
+library(tidyverse)
+library(lubridate)
+library(dplyr)
+library(agricolae)
+library(ggthemes)
+library(sf)
+library(leaflet)
+library(mapview)
+library(RColorBrewer)
+library(knitr)
+
+# Set your ggplot theme
+mytheme = theme_clean(base_size = 12) +
+  theme(
+    axis.text = element_text(color = "black"),
+    legend.position = "right",
+    axis.text.x = element_text(
+      angle = 45,
+      vjust = 0.5,
+      hjust = 0.5
+    ),
+    plot.title = element_text(size = 12)
+  )
+theme_set(mytheme)
+
+# Load your datasets
+
+#Asthma data
+NY_Asthma_processed = read.csv("./Data/ProcessedData/NY_Asthma_processed1.csv")
+
+#Air quality data
+NY_AQ_processed = read.csv("./Data/ProcessedData/NY_AQ_processed1.csv")
+NY_Ozone_processed = read.csv("./Data/ProcessedData/NY_Ozone_processed.csv")
+NY_PM25_processed = read.csv("./Data/ProcessedData/NY_PM25_processed.csv")
+NY_SO2_processed = read.csv("./Data/ProcessedData/NY_SO2_processed.csv")
+
+#Demographic data
+NY_Demographic_processed = read.csv("./Data/ProcessedData/NY_Demographic_processed1.csv")
+
+#U.S. shapefile by county
+US_sf = st_read("./Data/SpatialData/cb_2018_us_county_20m.shp")
+
+```
+
+# Rationale
+
+Over the past decade air pollution has emerged as to be one of the most serious environmental threats to the world's urban population. Studies over the years have reported the adverse health impacts of air pollution particles on people of all ages. Exposure to common urban air pollutants is associated with numerous adverse health effects, including respiratory and cardiovascular diseases, asthma exacerbation, reduced lung function and premature death. Asthma is one of the most common health problems in all age groups worldwide. Airborne pollutants may influence the symptoms of asthma patients. Asthma is a burden on communities, with significant public health and financial consequences. American Lung Association reported that New York City ranked 14th for ozone pollution among all cities in the U.S. Therefore, by studying data in New York State, we will have a better understanding of the relationship between asthma rate and air quality.
+
+Scope: We chose to look at data in New York State from 2018 to 2020 as this is the most recent data and there will be more observation counts rather than a single city.
+
+## Research Question
+
+**Question 1**: Is there a relationship between air quality and asthma rate in New York State between 2018 and 2020?
+
+**Question 2**: Is there a relationship between non-White population density and asthma rate in New York State between 2018 and 2020?
+
+\newpage
+
+# Dataset Information
+
+We got the asthma data from New York State's Department of Health. This data is the most recent data by county which aggregates the emergency visit rate per 10,000 people from 2018 to 2020. Air quality data is from EPA website. We chose annual AQI summary for AQI information and daily summary data for pollutants information. Demographic data is from Social Explorer, it is a 5-year estimated data from American Community Survey.
+
+| Name                                           | Data Source                                                                                                                          |
+|--------------------|----------------------------------------------------|
+| New York State Asthma Data by County           | <https://webbi1.health.ny.gov/SASStoredProcess/guest?_program=/EBI/PHIG/apps/asthma_dashboard/ad_dashboard&p=mp&ind_id=ad4%20&cos=1> |
+| New York State Demographic Data by County      | <https://www.socialexplorer.com/explore-tables>                                                                                      |
+| Annual AQI Summary Data and Daily Summary Data | <https://aqs.epa.gov/aqsweb/airdata/download_files.html#Daily>                                                                       |
+
+: Table 1: Data Acquisition
+
+\newpage
+
+# Data Wrangling
+
+Since children are among the most vulnerable to health issues associated with ozone pollution, we selected the children that aged 0 to 17 years emergency visit rate which is the emergency visit counts divided by average population. Also, we focused on non-White population density which is the number of total population minus White alone then divided by land area as racial and ethnic minority groups "continue to bear disproportionate hardship in managing asthma". For the annual AQI summary dataset, we first selected New York State's data, and calculated "bad days" rate. An AQI "good day" is a day when the AQI level of concern is measured to be less than or equal to 50. Therefore, we define an AQI "bad day" as a day when the AQI was greater than 50. After that, we combined the AQI dataframes together to calculate the mean bad days rate from 2018 to 2020. For air pollutants, we first selected New York State's data, then group it by county to gain the mean pollutant AQI. All cleaned datasets were saved into the processed folder. After all fo these steps were taken the data was considered to be wrangled and was then ready for initial visualizations.
+
+\newpage
+
+# Exploratory Analysis
+
+The exploratory analysis of the data includes visualizing the relationship between asthma rate and air quality, as well as the relationship between asthma rate and non-White population density. We first join processed datasets together, then plot the initial visualizations of these two relationships. Both graphs show a clear trend line. To test whether there are correlations, the following linear regression analysis was conducted.
+
+The following graph visualizes the possible relationship between asthma rate and air quality. It shows a potential trend that with the increasing bad days rate, the emergency visit rate increases.
+
+```{r ex-aq, message = FALSE, echo = FALSE, fig.align = "center", fig.cap = "Asthma Rate by Bad Days Rate"}
+NY_Asthma_AQ_join = left_join(NY_AQ_processed, NY_Asthma_processed, by = "County")
+AsthmaAQ.points = ggplot(NY_Asthma_AQ_join, aes(y = VisitRate, x = BadDaysRate)) +
+  geom_point(aes(color = County)) +
+  geom_smooth(method = "lm") +
+  labs(y = "Emergency Visit Rate (per 10k)", x = "Bad Days Rate")
+print(AsthmaAQ.points)
+
+```
+
+The following graph visualizes the possible relationship between asthma rate and non-White population density. However, there are too many counties have approximate non-White population density and a few counties have high asthma rate or high non-White population density.We need a linear model to show whether there is a coorelation between these two variables.
+
+```{r ex-demo-log, message = FALSE, echo = FALSE, fig.align = "center", fig.cap = "Asthma Rate by Non-White Population Density"}
+NY_Asthma_Demo_join = left_join(NY_Demographic_processed, NY_Asthma_processed, by = "County")
+AsthmaDemo.points = ggplot(NY_Asthma_Demo_join, aes(y = VisitRate, x = NonWhiteDens)) + 
+  geom_point(aes(color = County)) + 
+  geom_smooth(method = "lm") + 
+  labs(y = "Emergency Visit Rate (per 10k)", x = "Non-White Population Density (per sq.mile)")
+print(AsthmaDemo.points)
+
+```
+
+\newpage
+
+# Linear Regression
+
+### Linear Model for Asthma Rate and Air Quality
+
+First of all, we generated a simple linear model to test the relationship between asthma rate and air quality. The following figure shows the summary plot of this initial linear model. This model is poorly fitted as there are drastic residuals asymmetry from side to side. Therefore, a log scale was applied to both the y-axis and x-axis in order to help linearize the relationship and improve the model's fit as well as reduce the impact of extreme values.
+
+```{r lm-aq, message = FALSE, echo = FALSE, fig.align = "center", fig.cap = "Summary Plot of Asthma Rate by Air Quality"}
+AsthmaAQ.regression = lm(data = NY_Asthma_AQ_join, VisitRate ~ BadDaysRate)
+summary(AsthmaAQ.regression)
+par(mfrow = c(2,2), mar=c(3,3,3,3))
+plot(AsthmaAQ.regression)
+
+```
+
+The log-transformed model improved a lot compared to the former one. For this model, p-value < 0.05 which means we are 95% confident that there is a association between log-transformed asthma rate and log-transformed of bad days rate.
+
+```{r lm-aq-log, message = FALSE, echo = FALSE, fig.align = "center", fig.cap = "Log-transformed Summary Plot of Asthma Rate by Air Quality"}
+AsthmaAQ.regression2 = lm(data = NY_Asthma_AQ_join, log(VisitRate) ~ log(BadDaysRate))
+summary(AsthmaAQ.regression2)
+par(mfrow = c(2,2), mar=c(3,3,3,3))
+plot(AsthmaAQ.regression2)
+
+```
+
+### Linear Model for Asthma Rate and Non-White Population Density
+
+Besides, another linear model was conducted to test the relationship between asthma rate and non-White population density. This figure shows the summary plot of this initial linear model. This model is also poorly fitted as there are extreme residuals. Therefore, a log scale was applied to both the y-axis and x-axis in order to help linearize the relationship and improve the model's fit as well as reduce the impact of extreme values.
+
+```{r lm-demo, message = FALSE, echo = FALSE, fig.align = "center", fig.cap = "Summary Plot of Asthma Rate by Non-White Population Density"}
+AsthmaDemo.regression = lm(data = NY_Asthma_Demo_join, VisitRate ~ NonWhiteDens)
+summary(AsthmaDemo.regression)
+par(mfrow = c(2,2), mar=c(3,3,3,3))
+plot(AsthmaDemo.regression)
+
+```
+
+Similarly, the log-transformed model improved a lot compared to the former one. For this model, p-value < 0.05 which means we are 95% confident that there is a association between log-transformed asthma rate and log-transformed of non-White populaiton density.
+
+```{r lm-demo-log, message = FALSE, echo = FALSE, fig.align = "center", fig.cap = "Log-transformed Summary Plot of Asthma Rate by Non-White Population Density"}
+AsthmaDemo.regression2 = lm(data = NY_Asthma_Demo_join, log(VisitRate) ~ log(NonWhiteDens))
+summary(AsthmaDemo.regression2)
+par(mfrow = c(2,2), mar=c(3,3,3,3))
+plot(AsthmaDemo.regression2)
+
+```
+
+\newpage
+
+# Spatial Analysis
+
+Furthermore, we did spatial analysis to show the spatial distribution of asthma rate, non-White population density and air pollutants. We only represented ozone, PM2.5 and SO2 because after data wrangling, there aren't enough observation counts in other pollutants. Also, PM2.5 and ozone are big contributor to asthma rates. For PM2.5 can penetrate deep into lungs, causing airway inflammation, aggravating lung and heart disease, increasing hospital admissions. Moreover, Ozone can trigger a variety of health problems especially asthma. During the spatial analysis, we converted all coordinate reference systems to NAD83/New York Long Island(ftUS) as this fits New York State's location well, and joined the processed dataset to New York State's shapefile then did symbol. 
+
+### Visualize Asthma Rates
+
+The following map shows the spatial distribution of asthma rates. The Bronx had the highest asthma rates in the state which reaches up to 795. In New York County, there were 472 children had emergency visits in every 10,000 children which ranks the second.  
+
+```{r asthma map, warning = FALSE, echo = FALSE}
+NY_sf = US_sf %>% filter(STATEFP == "36")
+NY_sf_2263 = st_transform(NY_sf, crs = 2263)
+NY_Asthma_Counties_sf = merge(NY_sf_2263,
+                              NY_Asthma_processed,
+                              by.x = "NAME",
+                              by.y = "County")
+mapView(
+  NY_Asthma_Counties_sf,
+  zcol = "VisitRate",
+  col.regions = brewer.pal(10, "RdBu"),
+  layer.name = "Asthma Rate per 10,000 Children in New York Stae from 2018 to 2020",
+  map.types = "CartoDB.Positron",
+  label = NY_Asthma_Counties_sf$NAME,
+  labelOptions = labelOptions(
+    noHide = TRUE,
+    textOnly = TRUE,
+    textsize = "8px",
+    direction = "center"
+  )
+)
+
+```
+
+### Visualize Non-White Population Density
+
+This map shows the spatial distribution of non-White population density. Most counties have less than 500 non-White population density. While New York County, the Bronx, and Kings had the highest density of non-White population.
+
+```{r demographic map, warning = FALSE, echo = FALSE}
+NY_Demographic_Counties_sf = merge(NY_sf_2263,
+                                   NY_Demographic_processed,
+                                   by.x = "NAME",
+                                   by.y = "County")
+mapView(
+  NY_Demographic_Counties_sf,
+  zcol = "NonWhiteDens",
+  col.regions = brewer.pal(10, "PiYG"),
+  layer.name = "Non-White Population Density per Sq.mile in New York State from 2016 to 2020",
+  map.types = "CartoDB.Positron",
+  label = NY_Demographic_Counties_sf$NAME,
+  labelOptions = labelOptions(
+    noHide = TRUE,
+    textOnly = TRUE,
+    textsize = "8px",
+    direction = "center"
+  )
+) 
+
+```
+
+### Visualize Air Quality
+
+The following map shows the spatial distribution of air quality. There are only 27 counties have air quality data. Among them, the Bronx, New York County, and Queens suffered the worst air quality in the state.  
+
+```{r AQ map, warning = FALSE, echo = FALSE}
+NY_AQ_Counties_sf = merge(NY_sf_2263,
+                              NY_AQ_processed,
+                              by.x = "NAME",
+                              by.y = "County")
+mapView(NY_sf_2263,
+        col.regions = "lightyellow",
+        map.types = "CartoDB.Positron") + mapView(
+          NY_AQ_Counties_sf,
+          zcol = "BadDaysRate",
+          col.regions = brewer.pal(5, "Blues"),
+          layer.name = "Bad Days Rate in New York Stae from 2018 to 2020",
+          map.types = "CartoDB.Positron",
+          label = NY_AQ_Counties_sf$NAME,
+          labelOptions = labelOptions(
+            noHide = TRUE,
+            textOnly = TRUE,
+            textsize = "8px",
+            direction = "center"
+          )
+        )
+
+```
+
+### Visualize Air Pollutants AQI
+
+The following map shows the spatial distribution of ozone, PM2.5, SO2. There are 24 counties have ozone AQI data. Suffolk has the worst ozone level while New York County has the least ozone level in 2020. Only 14 counties have PM2.5 AQI data, and New York County faced the worst PM2.5 level. 15 counties have SO2 AQI data. Except St. Lawrence, other counties have very little SO2 level.
+
+```{r pollutants map, warning = FALSE, echo = FALSE}
+#Ozone monitor sites
+NY_Ozone_Counties_sf = merge(NY_sf_2263, NY_Ozone_processed, by.x = "NAME", by.y = "County")
+NY_Ozone_point = st_centroid(NY_Ozone_Counties_sf)
+mapView(NY_sf_2263, col.regions = "orange") + mapView(
+  NY_Ozone_point,
+  cex = "meanOzone",
+  col.regions = "mediumpurple",
+  layer.name = "Ozone in New York State in 2020",
+  map.types = "CartoDB.Positron"
+)
+
+#PM2.5 monitor sites
+NY_PM25_Counties_sf = merge(NY_sf_2263, NY_PM25_processed, by.x = "NAME", by.y = "County")
+NY_PM25_point = st_centroid(NY_PM25_Counties_sf)
+mapView(NY_sf_2263, col.regions = "orange") + mapView(
+  NY_PM25_point,
+  cex = "meanPM25",
+  col.regions = "cadetblue1",
+  layer.name = "PM2.5 in New York State in 2020",
+  map.types = "CartoDB.Positron"
+)
+
+#SO2 monitor sites
+NY_SO2_Counties_sf = merge(NY_sf_2263, NY_SO2_processed, by.x = "NAME", by.y = "County")
+NY_SO2_point = st_centroid(NY_SO2_Counties_sf)
+mapView(NY_sf, col.regions = "orange") + mapView(
+  NY_SO2_point,
+  cex = "meanSO2",
+  col.regions = "greenyellow",
+  layer.name = "SO2 in New York State in 2020",
+  map.types = "CartoDB.Positron"
+)
+
+```
+
+\newpage
+
+# Summary and Conclusions
+
+In conclusion, there is a apparent trend between childhood asthma rates and air quality and they are negatively correlated. The Bronx has the highest rate of childhood asthma of New York State, and it is also suffering bad air quality from 2018 to 2020. Also, there is a relationship between childhood asthma rates and non-White population density. The Bronx, New York County, and Kings have the highest density of non-White population while these areas have a higher rate of childhood asthma compared to areas with a larger White population. This uneven occurrence of childhood asthma reflects inequity as non-White populations live in communities with more pollution and poorer air quality. Generally, New York City suffered the worst air quality and it also has the most childhood asthma visit rates in the state. 
+
+There are some limitations for this research. As mentioned above, New York State has 62 counties but only 27 counties have annual AQI data. Only part of counties have monitor sites to measure certain air pollutants. The lack of data caused deviation in models and final results. If there are more detailed air quality data, we can better comprehend the relationships. 
+
+\newpage
+
+# References
+
+Asthma and Allergy Foundation of America. 2022. “Air Pollution.” August 8, 2022.
+https://aafa.org/asthma/asthma-triggers-causes/air-pollution-smog-asthma/. 
+
+Asthma and Allergy Foundation of America. 2020. “Asthma Disparities in America: A	Roadmap to Reducing Burden on Racial and Ethnic Minorities.”
+www.aafa.org/asthmadisparities/.
+
+US EPA, OAR. 2015. “Health Effects of Ozone Pollution.” Overviews and Factsheets. June 5, 2015.
+https://www.epa.gov/ground-level-ozone-pollution/health-effects-ozone-pollution. 
+
+Varghese, Ronniya. 2022. “Air Pollution in NYC: Causes, Effects, and Solutions.” Earth.Org.
+November 15, 2022. https://earth.org/air-pollution-in-nyc/. 
+

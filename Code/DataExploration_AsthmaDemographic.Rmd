@@ -46,7 +46,7 @@ NY_Asthma_Demo_join = left_join(NY_Demographic_processed, NY_Asthma_processed, b
 
 ```
 
-## Visualize the relationship of non-White population density by asthma rate with a scatter plot
+## Visualize the relationship of asthma rate by non-White population density with a scatter plot
 ```{r scatter plot, message = FALSE}
 AsthmaDemo.points = ggplot(NY_Asthma_Demo_join, aes(y = VisitRate, x = NonWhiteDens)) + 
   geom_point(aes(color = County)) + 

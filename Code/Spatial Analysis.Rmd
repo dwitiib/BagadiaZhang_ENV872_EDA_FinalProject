@@ -88,6 +88,31 @@ mapView(
 
 ```
 
+## Join air quality data to counties shapefile and visualize it 
+```{r AQ visualize, message = FALSE}
+NY_AQ_Counties_sf = merge(NY_sf_2263,
+                              NY_AQ_processed,
+                              by.x = "NAME",
+                              by.y = "County")
+mapView(NY_sf_2263,
+        col.regions = "lightyellow",
+        map.types = "CartoDB.Positron") + mapView(
+          NY_AQ_Counties_sf,
+          zcol = "BadDaysRate",
+          col.regions = brewer.pal(5, "Blues"),
+          layer.name = "Bad Days Rate in New York Stae from 2018 to 2020",
+          map.types = "CartoDB.Positron",
+          label = NY_AQ_Counties_sf$NAME,
+          labelOptions = labelOptions(
+            noHide = TRUE,
+            textOnly = TRUE,
+            textsize = "8px",
+            direction = "center"
+          )
+        )
+
+```
+
 ## Join pollutants data to counties shapefile and visualize it 
 ```{r pollutants visualize, message = FALSE}
 #Ozone monitor sites
