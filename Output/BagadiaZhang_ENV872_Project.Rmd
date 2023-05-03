@@ -24,21 +24,20 @@ editor_options:
 ```
 ## List of Tables
  
-*Data Acquisition* 
-```{r table, echo = FALSE, results='asis', ref.label='table'}
-
-
-```
+Table \@ref(tab:table)
 
 
 
 \newpage
 
 ## List of Figures
-```{r figure, warning = FALSE, echo = FALSE}
-- Figure \@ref(fig:ex-aq): Asthma Rate by Bad Days Rate
-```
 
+Figure \@ref(fig:ex-aq)
+Figure \@ref(fig:ex-demo)
+Figure \@ref(fig:lm-aq)
+Figure \@ref(fig:lm-aq-log)
+Figure \@ref(fig:lm-demo)
+Figure \@ref(fig:lm-demo-log)
 
 \newpage
 
@@ -110,13 +109,14 @@ Scope: Asthma is a chronic disease linked with considerable morbidity, mortality
 
 We got the asthma data from New York State's Department of Health. This data is the most recent data by county which aggregates the emergency visit rate per 10,000 people from 2018 to 2020. Air quality data is from EPA website. We chose annual AQI summary for AQI information and daily summary data for pollutants information. Demographic data is from Social Explorer, it is a 5-year estimated data from American Community Survey.
 
-| Name                                           | Data Source                                                                                                                          |
-|--------------------|----------------------------------------------------|
-| New York State Asthma Data by County           | <https://webbi1.health.ny.gov/SASStoredProcess/guest?_program=/EBI/PHIG/apps/asthma_dashboard/ad_dashboard&p=mp&ind_id=ad4%20&cos=1> |
-| New York State Demographic Data by County      | <https://www.socialexplorer.com/explore-tables>                                                                                      |
-| Annual AQI Summary Data and Daily Summary Data | <https://aqs.epa.gov/aqsweb/airdata/download_files.html#Daily>                                                                       |
+```{r table, warning = FALSE, echo = FALSE}
+Name = c("New York State Asthma Data by County", "New York State Demographic Data by County", "Annual AQI Summary Data and Daily Summary Data")
+DataSource = c("https://webbi1.health.ny.gov/SASStoredProcess/guest?_program=/EBI/PHIG/apps/asthma_dashboard/ad_dashboard&p=mp&ind_id=ad4%20&cos=1", "https://www.socialexplorer.com/explore-tables", "https://aqs.epa.gov/aqsweb/airdata/download_files.html#Daily")
+dataset = data.frame(Name, DataSource)
+colnames(dataset) = c("Name", "Data Source")
+knitr::kable(dataset, caption = "Data Acquisition")
 
-: Table 1: Data Acquisition
+```
 
 \newpage
 
@@ -144,7 +144,7 @@ print(AsthmaAQ.points)
 
 The following graph visualizes the possible relationship between asthma rate and non-White population density. However, there are too many counties have approximate non-White population density and a few counties have high asthma rate or high non-White population density.We need a linear model to show whether there is a coorelation between these two variables.
 
-```{r ex-demo-log, message = FALSE, echo = FALSE, fig.align = "center", fig.cap = "Asthma Rate by Non-White Population Density"}
+```{r ex-demo, message = FALSE, echo = FALSE, fig.align = "center", fig.cap = "Asthma Rate by Non-White Population Density"}
 NY_Asthma_Demo_join = left_join(NY_Demographic_processed, NY_Asthma_processed, by = "County")
 AsthmaDemo.points = ggplot(NY_Asthma_Demo_join, aes(y = VisitRate, x = NonWhiteDens)) + 
   geom_point(aes(color = County)) + 
