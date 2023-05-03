@@ -29,7 +29,6 @@ Folders in this repository include: Output, Code, Data/Raw, & Data/Processed. Da
 
 ## Metadata
 
-<For each data file in the repository, describe the data contained in each column. Include the column name, a description of the information, the class of data, and any units associated with the data. Create a list or table for each data file.> 
 Raw Data: 
 
 1. AD-CountyMostRecentYearsData 
@@ -56,13 +55,55 @@ Columns: "State","County","Year","Days with AQI","Good Days","Moderate Days","Un
 Column Meaning: Name of the state, Name of the county, Year, Days with recorded AQI, No. of Good days, No. of Moderate Days, No. of days which are unhealthy for sensitive groups, No. of days with are unhealthy for all, No. of days which are very unhealthy for all, No. of extremely unhealthy days, Maximum Qir Quality Index recorded in 2020, Median of Air Quality Index recorded in 2020, Days with Carbon Monoxide recorded in 2020, Days with Nitrogen Oxide recorded in 2020, Days with level of Ozone Recorded in 2020, Days with PM2.5 recorded in 2020, Days with PM10 recorded in 2020
 
 
-5. Daily_42101_2020
+5. Daily_42101_2020, Daily_42401_2020, Daily_42602_2020, Daily_44201_2020, Daily_81102_2020, Daily_88502_2020
 Columns: "State Code", "County Code", "Site Num", "Parameter Code", "POC", "Latitude", "Longitude", "Datum", "Parameter Name", "Sample Duration", "Pollutant Standard", "Date Local", "Units of Measure", "event Type", "Observation County", "Observation Percent", "Arithmetic Mean", "1st Max Value", "1st Max Hour", "AQI", "Method Code", "Method Name", "Local Site Name", "Address", "State Name", "County Name", "City Name", "CBSA Name", "Date of Last Change"
 
 Column Meaning: "The FIPS code of the state ", "The FIPS code of the county", "A unique number within the county identifying the site", "The AQS code corresponding to the parameter measured by the monitor", "This is the “Parameter Occurrence Code", "The monitoring site’s angular distance north of the equator measured in decimal degrees", "The monitoring site’s angular distance east of the prime meridian measured in decimal degrees", "The Datum associated with the Latitude and Longitude measures", "The name or description assigned in AQS to the parameter measured by the monitor", "The averaging period", "A description of the ambient air quality standard rules used to aggregate statistics", "The calendar date of the average in Local Standard Time at the monitor", "The unit of measure for the parameter", "Indicates whether data measured during exceptional events are included in the summary", "Number of observations taken during a day", "The average (arithmetic mean) value for the day", "The highest value for the day", "The hour when the highest value for the day was taken", ""The Air Quality Index for the day for the pollutant", "An internal system code indicating the method", "A short description of the processes, equipment, and protocols used in gathering and measuring the sample", "The name of the site", "Approximate street name of the monitoring site", "Name of the State"< "Name of the County", "Name of the City", "Name of the core bases statistical area", ""The date the last time any numeric values in this record were updated in the AQS data system". 
 
+
+6. R13366951_SL050
+Columns: Geo_FILEID,Geo_STUSAB,Geo_SUMLEV,Geo_GEOCOMP,Geo_LOGRECNO,Geo_US,Geo_REGION,Geo_DIVISION,Geo_STATECE,Geo_STATE,Geo_COUNTY,Geo_COUSUB,Geo_PLACE,Geo_TRACT,Geo_BLKGRP,Geo_CONCIT,Geo_AIANHH,Geo_AIANHHFP,Geo_AIHHTLI,Geo_AITSCE,Geo_AITS,Geo_ANRC,Geo_CBSA,Geo_CSA,Geo_METDIV,Geo_MACC,Geo_MEMI,Geo_NECTA,Geo_CNECTA,Geo_NECTADIV,Geo_UA,Geo_CDCURR,Geo_SLDU,Geo_SLDL,Geo_ZCTA5,Geo_SUBMCD,Geo_SDELM,Geo_SDSEC,Geo_SDUNI,Geo_UR,Geo_PCI,Geo_PUMA5,Geo_GEOID,Geo_NAME,Geo_BTTR,Geo_BTBG,Geo_QName,Geo_FIPS,Geo_AREALAND,Geo_AREAWATR,Geo_PLACESE,Geo_UACP,Geo_VTD,Geo_ZCTA3,Geo_TAZ,Geo_UGA,Geo_PUMA1,SE_A00001_001,SE_A00003_001,SE_A00003_002,SE_A00003_003,SE_A03001_001,SE_A03001_002,SE_A03001_003,SE_A03001_004,SE_A03001_005,SE_A03001_006,SE_A03001_007,SE_A03001_008
+
+Column Meaning: "File identification","State Postal Abbreviation","Summary Level","Geographic Component","Logical Record Number","US","Census Region","Census Division","State (Census Code)","State (FIPS Code)","County of current residence","County Subdivision (FIPS)","Place (FIPS Code)","Census Tract","Block Group","Consolidated City","American Indian Area/Alaska Native Area/ Hawaiian Home Land (Census)","American Indian Area/Alaska Native Area/ Hawaiian Home Land (FIPS)","American Indian Trust Land/Hawaiian Home Land Indicator","American Indian Tribal Subdivision (Census)","American Indian Tribal Subdivision (FIPS)","Alaska Native Regional Corporation (FIPS)","Metropolitan and Micropolitan Statistical Area","Combined Statistical Area","Metropolitan Statistical Area- Metropolitan Division","Metropolitan Area Central City","Metropolitan/Micropolitan Indicator Flag","New England City and Town Area","New England City and Town Combined Statistical Area","New England City and Town Area Division","Urban Area","Current Congressional District ***","State Legislative District Upper","State Legislative District Lower","5-digit ZIP Code Tabulation Area","Subminor Civil Division (FIPS)","State-School District (Elementary)","State-School District (Secondary)","State-School District (Unified)","Urban/Rural","Principal City Indicator","Public Use Microdata Area – 5% File","Geographic Identifier","Area Name","Tribal Tract","Tribal Block Group","Qualifying Name","FIPS","Area (Land)","Area (Water)","Place (State FIPS + Place FIPS)","Urban Area Central Place","Voting District","ZIP Code Tabulation Area (3-digit)","Traffic Analysis Zone","Urban Growth Area","Public Use Microdata Area - 1% File","Total Population","Area Total:","Area Total: Area (Land)","Area Total: Area (Water)","Total Population:","Total Population: White Alone","Total Population: Black or African American Alone","Total Population: American Indian and Alaska Native Alone","Total Population: Asian Alone","Total Population: Native Hawaiian and Other Pacific Islander Alone","Total Population: Some Other Race Alone","Total Population: Two or More Races"
+
+
 Processed Data:
-Spatial Data: 
+
+1. NY_AQ_Processed1
+Columns: "County","BadDaysRate"
+Column Meaning: "Name of the County", "Rate of number of bad days recorded in the county in the years 2018-2020"
+
+2. NY_Asthma_Processed1
+Columns: "County","Visit Rate"
+Column Meaning: "Name of the County", "Rate of asthma patients that visited the ER in the county"
+
+3. NY_CO_Processed
+Columns: "County", "Mean CO"
+Column Meaning: "Name of the County", "Average of Carbon Monoxide recorded"
+
+4. NY_Demographic_Processed
+Columns: "County", "NonWhiteDens"
+Column Meaning: "Name of the County", "Rate of Non white population in the county"
+
+5. NY_NO2_Processed
+Columns: "County", "MeanNO2"
+Column Meaning: "Name of the County", "Average of Nitrogen Dioxide recorded"
+
+6. NY_Ozone_Processed
+Columns: "County", "MeanOzone"
+Column Meaning: "Name of the County", "Average of Ozone recorded"
+
+7. NY_PM10_Processed
+Columns: "County", "MeanPM10"
+Column Meaning: "Name of the County", "Average of PM10 recorded"
+
+8. NY_PM25_Processed
+Columns: "County", "MeanPM25"
+Column Meaning: "Name of the County", "Average of PM2.5 recorded"
+
+9. NY_SO2_processed
+Columns: "County", "MeanSO2"
+Column Meaning: "Name of the County", "Average of Sulphur Dioxide recorded"
 
 
 ## Scripts and code
