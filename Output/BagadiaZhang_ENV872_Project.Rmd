@@ -23,7 +23,7 @@ editor_options:
 \newpage
 ```
 ## List of Tables
-
+ 
 *Data Acquisition* 
 ```{r table, echo = FALSE, results='asis', ref.label='table'}
 
